@@ -1,5 +1,5 @@
 <template>
-  <ul>
+  <transition-group name="flip-list" tag="ul">
     <li v-for="(q, index) in survey" :key="q.id" class="question">
       <div style="display: flex">
         <button
@@ -25,7 +25,7 @@
         </li>
       </ul>
     </li>
-  </ul>
+  </transition-group>
   <button @click="addQuestion">Добавить вопрос</button>
 </template>
 
@@ -133,5 +133,9 @@ export default {
 
 .question + .question {
   margin-top: 10px;
+}
+
+.flip-list-move {
+  transition: transform 0.3s cubic-bezier(0.770, 0.000, 0.175, 1.000);
 }
 </style>
