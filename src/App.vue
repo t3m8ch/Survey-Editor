@@ -1,6 +1,7 @@
 <template>
   <survey-editor
     :survey="survey"
+    @updateSurvey="onUpdateSurvey"
     @addQuestion="onAddQuestion"
     @deleteQuestion="onDeleteQuestion"
     @addAnswer="onAddAnswer"
@@ -18,6 +19,8 @@ export default {
     const survey = ref([]);
 
     watch(survey, (newSurvey) => console.log(newSurvey), { deep: true });
+
+    const onUpdateSurvey = (newSurvey) => survey.value = newSurvey;
 
     const onAddQuestion = (newSurvey) => survey.value.push(newSurvey);
     const onDeleteQuestion = (questionId) => {
@@ -37,6 +40,7 @@ export default {
 
     return {
       survey,
+      onUpdateSurvey,
       onAddQuestion,
       onDeleteQuestion,
       onAddAnswer,

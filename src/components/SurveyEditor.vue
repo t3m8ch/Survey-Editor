@@ -1,6 +1,16 @@
 <template>
   <ul>
-    <li v-for="q in survey" :key="q.id">
+    <li v-for="(q, index) in survey" :key="q.id" class="question">
+      <div style="display: flex">
+        <button
+          @click="moveQuestionDown(q.id)"
+          :disabled="index === survey.length - 1">
+          Вниз
+        </button>
+        <button @click="moveQuestionUp(q.id)" :disabled="index === 0">
+          Вверх
+        </button>
+      </div>
       <div style="display: flex">
         <h3>{{ q.question }}</h3>
         <button style="margin-left: 1rem" @click="deleteQuestion(q.id)">
@@ -31,6 +41,8 @@ export default {
     },
   },
   emits: {
+    updateSurvey: null,
+
     addQuestion: null,
     deleteQuestion: (questionId) => typeof questionId === "number",
 
@@ -83,9 +95,43 @@ export default {
       deleteUnnecessaryAnswers();
     };
 
-    return { addQuestion, deleteQuestion, onInputAnswer };
+    const moveQuestionDown = (questionId) => {
+      const curr = props.survey.findIndex((q) => q.id === questionId);
+      const next = curr + 1;
+
+      let newSurvey = [...props.survey];
+      [newSurvey[curr], newSurvey[next]] = [newSurvey[next], newSurvey[curr]];
+
+      emit("updateSurvey", newSurvey);
+    };
+
+    const moveQuestionUp = (questionId) => {
+      const curr = props.survey.findIndex((q) => q.id === questionId);
+      const prev = curr - 1;
+
+      let newSurvey = [...props.survey];
+      [newSurvey[curr], newSurvey[prev]] = [newSurvey[prev], newSurvey[curr]];
+
+      emit("updateSurvey", newSurvey);
+    };
+
+    return {
+      addQuestion,
+      deleteQuestion,
+      onInputAnswer,
+      moveQuestionDown,
+      moveQuestionUp,
+    };
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.question {
+  background: #ddd;
+}
+
+.question + .question {
+  margin-top: 10px;
+}
+</style>
