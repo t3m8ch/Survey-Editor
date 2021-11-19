@@ -1,26 +1,47 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
+  <survey-editor
+    :survey="survey"
+    @addQuestion="onAddQuestion"
+    @deleteQuestion="onDeleteQuestion"
+    @addAnswer="onAddAnswer"
+    @deleteAnswers="onDeleteAnswers" />
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import SurveyEditor from "./components/SurveyEditor";
+import { ref, watch } from "vue";
 
 export default {
   name: "App",
-  components: {
-    HelloWorld,
+  components: { SurveyEditor },
+  setup() {
+    const survey = ref([]);
+
+    watch(survey, (newSurvey) => console.log(newSurvey), { deep: true });
+
+    const onAddQuestion = (newSurvey) => survey.value.push(newSurvey);
+    const onDeleteQuestion = (questionId) => {
+      survey.value = survey.value.filter((q) => q.id !== questionId);
+    };
+
+    const onAddAnswer = ({ questionId, newAnswer }) => {
+      const question = survey.value.find((q) => q.id === questionId);
+      question.answers.push(newAnswer);
+    };
+    const onDeleteAnswers = ({ questionId, answersIds }) => {
+      const question = survey.value.find((q) => q.id === questionId);
+      question.answers = question.answers.filter(
+        (a) => !answersIds.includes(a.id)
+      );
+    };
+
+    return {
+      survey,
+      onAddQuestion,
+      onDeleteQuestion,
+      onAddAnswer,
+      onDeleteAnswers,
+    };
   },
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
